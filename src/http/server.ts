@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import cookie from "@fastify/cookie";
+import cors from "fastify-cors";
 import websocket from "@fastify/websocket";
 import { createPoll } from "./routes/create-poll";
 import { getPoll } from "./routes/get-poll";
@@ -12,6 +13,8 @@ app.register(cookie, {
   secret: "polls-app-shuharib0t",
   hook: "onRequest",
 });
+
+app.register(cors);
 
 app.register(websocket);
 
