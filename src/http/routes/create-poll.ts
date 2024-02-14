@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
 import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
+
+dotenv.config();
 
 export async function createPoll(app: FastifyInstance) {
   app.post("/polls", async (req, reply) => {
