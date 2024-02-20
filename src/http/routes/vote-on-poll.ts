@@ -62,9 +62,9 @@ export async function voteOnPoll(app: FastifyInstance) {
 
       reply.setCookie("sessionId", sessionId, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        signed: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
         httpOnly: true,
+        sameSite: "strict",
       });
     }
 

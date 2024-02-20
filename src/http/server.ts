@@ -16,7 +16,12 @@ app.register(cookie, {
   hook: "onRequest",
 });
 
-app.register(cors);
+const corsOptions = {
+  credentials: true,
+  origin: true,
+};
+
+app.register(cors, corsOptions);
 
 app.register(websocket);
 
@@ -25,9 +30,11 @@ app.register(getPolls);
 app.register(getPoll);
 app.register(voteOnPoll);
 app.register(deletePoll);
-
 app.register(pollResults);
 
-app.listen({ port: 3333 }).then(() => {
-  console.log("HTTP server running");
+const serverDomain = process.env.SERVER_DOMAIN || "localhost";
+const serverPort = parseInt(process.env.SERVER_PORT || "3333", 10);
+
+app.listen({ port: serverPort, host: serverDomain }).then(() => {
+  console.log(`HTTP server running on http://${serverDomain}:${serverPort}`);
 });
