@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Note {
+  id         String   @id @default(uuid())
+  text       String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
 model Poll {
   id         String   @id @default(uuid())
   title      String

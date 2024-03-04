@@ -8,6 +8,10 @@ import { voteOnPoll } from "./routes/vote-on-poll";
 import { getPolls } from "./routes/get-polls";
 import { deletePoll } from "./routes/delete-poll";
 import { pollResults } from "./ws/poll-results";
+import { createNote } from "./routes/create-note";
+import { deleteNote } from "./routes/delete-note";
+import { updateNote } from "./routes/update-note";
+import { getNotes } from "./routes/get-notes";
 
 const app = fastify();
 
@@ -18,13 +22,17 @@ app.register(cookie, {
 
 const corsOptions = {
   credentials: true,
-  origin: true,
+  origin: "http://localhost:5173",
 };
 
 app.register(cors, corsOptions);
 
 app.register(websocket);
 
+app.register(createNote);
+app.register(getNotes);
+app.register(updateNote);
+app.register(deleteNote);
 app.register(createPoll);
 app.register(getPolls);
 app.register(getPoll);
