@@ -20,45 +20,32 @@ export async function voteOnPoll(app: FastifyInstance) {
 
     let { sessionId } = req.cookies;
 
-    if (sessionId) {
-      const userPreviousVoteOnPoll = await prisma.vote.findUnique({
-        where: {
-          sessionId_pollId: {
-            sessionId,
-            pollId,
-          },
-        },
-      });
+    // Verificar se o sessionId foi removido manualmente
+    const sessionExists = await prisma.vote.findFirst({
+      where: {
+        sessionId: sessionId,
+      },
+    });
 
-      if (
-        userPreviousVoteOnPoll &&
-        userPreviousVoteOnPoll.pollOptionId !== pollOptionId
-      ) {
-        await prisma.vote.delete({
-          where: {
-            id: userPreviousVoteOnPoll.id,
-          },
-        });
-
-        const votes = await redis.zincrby(
-          pollId,
-          -1,
-          userPreviousVoteOnPoll.pollOptionId
-        );
-
-        voting.publish(pollId, {
-          pollOptionId: userPreviousVoteOnPoll.pollOptionId,
-          votes: Number(votes),
-        });
-      } else if (userPreviousVoteOnPoll) {
-        return reply
-          .status(400)
-          .send({ message: "You already voted on this poll" });
-      }
-    }
-
-    if (!sessionId) {
+    if (!sessionId || !sessionExists) {
+      // Se o sessionId não existir ou tiver sido removido manualmente,
+      // criar um novo sessionId
       sessionId = randomUUID();
+
+      // Limpar votos associados ao sessionId anterior, se houver
+      if (sessionExists) {
+        await prisma.vote.deleteMany({
+          where: {
+            sessionId: sessionExists.sessionId,
+          },
+        });
+
+        // Limpar votos no Redis
+        const prevVotes = await redis.zrange(pollId, 0, -1);
+        for (const option of prevVotes) {
+          await redis.zrem(pollId, option);
+        }
+      }
 
       reply.setCookie("sessionId", sessionId, {
         path: "/",
@@ -68,6 +55,43 @@ export async function voteOnPoll(app: FastifyInstance) {
       });
     }
 
+    // Lógica de troca de votos
+    const userPreviousVoteOnPoll = await prisma.vote.findUnique({
+      where: {
+        sessionId_pollId: {
+          sessionId,
+          pollId,
+        },
+      },
+    });
+
+    if (
+      userPreviousVoteOnPoll &&
+      userPreviousVoteOnPoll.pollOptionId !== pollOptionId
+    ) {
+      await prisma.vote.delete({
+        where: {
+          id: userPreviousVoteOnPoll.id,
+        },
+      });
+
+      const votes = await redis.zincrby(
+        pollId,
+        -1,
+        userPreviousVoteOnPoll.pollOptionId
+      );
+
+      voting.publish(pollId, {
+        pollOptionId: userPreviousVoteOnPoll.pollOptionId,
+        votes: Number(votes),
+      });
+    } else if (userPreviousVoteOnPoll) {
+      return reply
+        .status(400)
+        .send({ message: "You already voted on this poll" });
+    }
+
+    // Registrar novo voto
     await prisma.vote.create({
       data: {
         sessionId,
