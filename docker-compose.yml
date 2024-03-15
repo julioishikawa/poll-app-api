@@ -6,9 +6,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=polls
+      - POSTGRES_USER=shuharib0t
+      - POSTGRES_PASSWORD=Fm7qt4Qg5u2gcU5Nf7nRlg7eLJhsaIC8
+      - POSTGRES_DB=polls_udau
     volumes:
       - polls_pg_data:/bitnami/postgresql
 

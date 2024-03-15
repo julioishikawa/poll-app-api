@@ -11,7 +11,6 @@ export async function deleteNote(app: FastifyInstance) {
     const { noteId } = getNoteParams.parse(req.params);
 
     try {
-      // Verifique se a enquete existe
       const existingNote = await prisma.note.findUnique({
         where: { id: noteId },
       });
@@ -20,7 +19,6 @@ export async function deleteNote(app: FastifyInstance) {
         return reply.status(404).send({ error: "Nota não encontrada" });
       }
 
-      // Finalmente, remova a enquete
       await prisma.note.delete({
         where: { id: noteId },
       });

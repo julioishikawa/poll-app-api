@@ -20,7 +20,6 @@ export async function voteOnPoll(app: FastifyInstance) {
 
     let { sessionId } = req.cookies;
 
-    // Verificar se o sessionId foi removido manualmente
     const sessionExists = await prisma.vote.findFirst({
       where: {
         sessionId: sessionId,
@@ -28,11 +27,8 @@ export async function voteOnPoll(app: FastifyInstance) {
     });
 
     if (!sessionId || !sessionExists) {
-      // Se o sessionId não existir ou tiver sido removido manualmente,
-      // criar um novo sessionId
       sessionId = randomUUID();
 
-      // Limpar votos associados ao sessionId anterior, se houver
       if (sessionExists) {
         await prisma.vote.deleteMany({
           where: {
@@ -40,7 +36,6 @@ export async function voteOnPoll(app: FastifyInstance) {
           },
         });
 
-        // Limpar votos no Redis
         const prevVotes = await redis.zrange(pollId, 0, -1);
         for (const option of prevVotes) {
           await redis.zrem(pollId, option);
@@ -49,13 +44,12 @@ export async function voteOnPoll(app: FastifyInstance) {
 
       reply.setCookie("sessionId", sessionId, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
         sameSite: "strict",
       });
     }
 
-    // Lógica de troca de votos
     const userPreviousVoteOnPoll = await prisma.vote.findUnique({
       where: {
         sessionId_pollId: {
@@ -91,7 +85,6 @@ export async function voteOnPoll(app: FastifyInstance) {
         .send({ message: "You already voted on this poll" });
     }
 
-    // Registrar novo voto
     await prisma.vote.create({
       data: {
         sessionId,

@@ -11,7 +11,6 @@ export async function deletePoll(app: FastifyInstance) {
     const { pollId } = getPollParams.parse(req.params);
 
     try {
-      // Verifique se a enquete existe
       const existingPoll = await prisma.poll.findUnique({
         where: { id: pollId },
         include: { options: true },
@@ -21,19 +20,16 @@ export async function deletePoll(app: FastifyInstance) {
         return reply.status(404).send({ error: "Enquete não encontrada" });
       }
 
-      // Remova registros dependentes, como votos
       await prisma.vote.deleteMany({
         where: {
           pollOptionId: { in: existingPoll.options.map((opt) => opt.id) },
         },
       });
 
-      // Em seguida, remova as opções de enquete
       await prisma.pollOption.deleteMany({
         where: { pollId: pollId },
       });
 
-      // Finalmente, remova a enquete
       await prisma.poll.delete({
         where: { id: pollId },
       });
