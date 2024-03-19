@@ -8,6 +8,7 @@
 - Fastify
 - TypeScript
 - Prisma
+- Docker
 - PostgreSQL
 - ioredis
 - zod
