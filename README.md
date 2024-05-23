@@ -48,4 +48,4 @@ Para fazer os testes da aplicação no seu computador você vai precisar baixar 
 
 Estou hospedando os servidores do Postgres/Redis utilizando um plano gratuito então pode ter alguns 'bugs' de funcionalidades. Vou utilizar como exemplo a criação de notas/enquetes, apesar de eu colocar um timeout de 1s para chamar a nova nota/enquete que o usuário criou, o servidor pode acabar tendo um pico de lag e não vai aparecer a nota/enquete que o usuário criou, então nesse caso o usuário vai precisar dar um F5(Atualizar a página) para que a sua nota/enquete apareça. Lembrando que isso é totalmente culpa do servidor gratuito e não da aplicação.
 
-Feito por [shuharib0t](https://www.linkedin.com/in/julio-ishikawa-449417213/) 👋.
+Feito por [Julio Ishikawa](https://www.linkedin.com/in/julio-ishikawa-449417213/) 👋.
