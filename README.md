@@ -1,6 +1,6 @@
 # Poll-app-api
 
-É um servidor feito para armazenar notas e enquetes, o schema/migrations do banco de dados foi feito com Prisma, o armazenamento é pelo PostgreSQL e os resultados dos votos ficam armazenados no Redis. Tudo em isso em conjunto forma uma aplicação totalmente funcional com funcionalidades incríveis, confira [aqui](https://github.com/shuharib0t/poll-app).
+É um servidor feito para armazenar notas e enquetes, o schema/migrations do banco de dados foi feito com Prisma, o armazenamento é pelo PostgreSQL e os resultados dos votos ficam armazenados no Redis. Tudo em isso em conjunto forma uma aplicação totalmente funcional com funcionalidades incríveis, confira [aqui](https://github.com/julioishikawa/poll-app).
 
 ## Tecnologias(libs) usadas ⚡️
 
